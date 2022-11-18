@@ -1,5 +1,6 @@
 import functools
-def TicTacToe():
+import random
+def TicTacToe(player):
 
     PIECE_X = 'X'
     PIECE_O = 'O'
@@ -29,7 +30,7 @@ def TicTacToe():
             self.bant = 0
             self.bdia = 0
             self.restart = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
+            
         def get_user_move(self):
             try:
                 user = input("Move: ")
@@ -47,6 +48,14 @@ def TicTacToe():
             except:
                 print("Invalid input. Format should be like b4\n")
                 return self.get_user_move()
+            
+        def get_computer_move(self):
+            move = Coordinate(
+                random.choice([0,1,2,3,4,5,6,7,8]),
+                random.choice([0,1,2,3,4,5,6,7,8])
+            )
+            return move
+
 
         def render(self):
             print("  a b c   d e f   g h i")
@@ -72,13 +81,19 @@ def TicTacToe():
         def play(self):
             while True:
                 self.render()
-                move = self.get_user_move()
+                if self.count % 2 == 1 and player == 1:
+                    move =self.get_computer_move()
+                else:
+                    move = self.get_user_move()
                 pos = int(move.row/3) * 3 + int(move.column/3)
                 self.restart[pos] += 1
     
                 while self.board[move.row][move.column] != PIECE_EMPTY or pos in self.win:
-                        print('error, please resubmit')
-                        move = self.get_user_move()
+                        if self.count % 2 == 1 and player == 1:
+                            move =self.get_computer_move()
+                        else:
+                            print('error, please resubmit')
+                            move = self.get_user_move()
                         pos = int(move.row/3) * 3 + int(move.column/3)                
 
                 if self.count %2 == 0:
@@ -127,9 +142,24 @@ def TicTacToe():
                     
     return Game
 
+def get_user():
+    try:
+        user = input("player: ")
+        assert (user == 'computer' or user == 'player')
+        if user == 'computer':
+            return 1
+        else:
+            return 2
+    except (KeyboardInterrupt, EOFError) as e:
+        exit()
+    except:
+        print("Invalid input. \n")
+        return get_user()
 
 if __name__ == "__main__":
     print("Nested TicTacToe")
     print("------")
-    game = TicTacToe()()
+    print("Choose your compoent -- computer/player")
+    player = get_user()
+    game = TicTacToe(player)()
     game.play()
